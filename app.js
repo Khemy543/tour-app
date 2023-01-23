@@ -1,6 +1,9 @@
 const express = require('express');
 const morgan = require('morgan');
 
+const AppError = require('./utils/appError');
+const errorHandler = require('./controllers/errorController');
+
 // routes
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -20,5 +23,13 @@ app.use(express.json());
 // mounting routers
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+
+//route not found
+app.all('*', (req, res, next) => {
+  next(new AppError('Route not found', 404));
+});
+
+//error handling middleware
+app.use(errorHandler);
 
 module.exports = app;

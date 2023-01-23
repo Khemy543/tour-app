@@ -8,7 +8,9 @@
   },
   "scripts": {
     "start": "nodemon server.js",
-    "test": "test"
+    "start:prod": "NODE_ENV=production nodemon server.js",
+    "test": "test",
+    "debug": "ndb server.js"
   },
   "keywords": [
     "express",
