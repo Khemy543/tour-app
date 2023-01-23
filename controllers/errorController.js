@@ -48,7 +48,7 @@ module.exports = (err, req, res, next) => {
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
     error.name = err.name; // issue here
-    error.errmsg = err.errmsg;
+    error.errmsg = err.errmsg; // issue here too
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateErrorDB(error);
     if (error.name === 'ValidationError')

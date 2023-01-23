@@ -5,6 +5,7 @@ const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
 
 // routes
+const authRouter = require('./routes/authRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
@@ -21,8 +22,9 @@ app.use(express.json());
 
 //routes
 // mounting routers
-app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/tours', tourRouter);
 
 //route not found
 app.all('*', (req, res, next) => {
