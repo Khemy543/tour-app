@@ -1,16 +1,15 @@
-exports.getAllUsers = (req, res) => {
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-  });
-};
+const User = require('../models/userModal');
+const catchAync = require('../utils/catchAync');
 
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
+exports.getAllUsers = catchAync(async (req, res) => {
+  const users = await User.find();
+  res.status(200).json({
+    success: true,
+    data: {
+      users,
+    },
   });
-};
+});
 
 exports.getUser = (req, res) => {
   res.status(500).json({
