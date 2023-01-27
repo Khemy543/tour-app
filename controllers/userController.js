@@ -1,4 +1,4 @@
-const User = require('../models/userModal');
+const User = require('../models/userModel');
 const catchAync = require('../utils/catchAync');
 
 exports.getAllUsers = catchAync(async (req, res) => {
