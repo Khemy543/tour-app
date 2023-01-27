@@ -15,6 +15,18 @@ const getSignedToken = (id) => {
   return token;
 };
 
+const cookieOptions = {
+  expires: new Date(
+    Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+  ),
+  secure: true,
+  httpOnly: true,
+};
+
+if (process.env.NODE_ENV === 'production') {
+  cookieOptions.secure = false;
+}
+
 const filterObj = (obj, fields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -33,6 +45,8 @@ exports.signup = catchAync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
   });
 
+  user.password = undefined;
+  res.cookie('jwt', getSignedToken(user._id), cookieOptions);
   res.status(201).json({
     success: true,
     data: {
@@ -57,6 +71,8 @@ exports.login = catchAync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
   }
   //send response
+  user.password = undefined;
+  res.cookie('jwt', getSignedToken(user._id), cookieOptions);
   res.status(200).json({
     success: true,
     data: {

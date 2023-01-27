@@ -1,5 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSantize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 
 const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
@@ -12,14 +17,47 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 //middlewares
+
+// Set security http
+app.use(helmet());
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// do not allow more than 100 request for the same IP in an hour
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 100,
+  message: 'Too many request from this IP please try again in an hour',
+});
+
+app.use('/api', limiter);
+
 app.use(express.static(`${__dirname}/public`));
 
 //middleware to get request body
-app.use(express.json());
+app.use(express.json({ limit: '10kb' })); // limiting the size of the request body to 10KB
 
+//Data sanitization against malicious query injection
+app.use(mongoSantize());
+
+//Data sanitizatin against XSS attacks
+app.use(xss());
+
+// prevent query parameter pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsAverage',
+      'ratingsQuantity',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
 //routes
 // mounting routers
 app.use('/api/v1/auth', authRouter);
