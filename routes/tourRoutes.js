@@ -1,4 +1,5 @@
 const express = require('express');
+const reviewRouter = require('./reviewRoutes');
 const {
   getAllTours,
   createTour,
@@ -10,6 +11,9 @@ const {
 const { protectRoute, restrictTo } = require('../controllers/authController');
 
 const router = express.Router();
+
+//nested routes, tours and reviews
+router.use('/:tour/reviews', reviewRouter);
 
 router.route('/tour-stats').get(getTourStats);
 
