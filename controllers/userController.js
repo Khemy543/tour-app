@@ -1,33 +1,15 @@
 const User = require('../models/userModel');
-const catchAync = require('../utils/catchAync');
+const {
+  deleteResource,
+  updateResource,
+  getResouceById,
+  getAllResouces,
+} = require('./handlerFactoryController');
 
-exports.getAllUsers = catchAync(async (req, res) => {
-  const users = await User.find();
-  res.status(200).json({
-    success: true,
-    data: {
-      users,
-    },
-  });
-});
+exports.getAllUsers = getAllResouces(User);
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-  });
-};
+exports.getUser = getResouceById(User);
 
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-  });
-};
+exports.updateUser = updateResource(User);
 
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-  });
-};
+exports.deleteUser = deleteResource(User);

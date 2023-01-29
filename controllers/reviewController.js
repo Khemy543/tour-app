@@ -1,5 +1,10 @@
 const Review = require('../models/reviewModel');
 const catchAync = require('../utils/catchAync');
+const {
+  deleteResource,
+  updateResource,
+  getResouceById,
+} = require('./handlerFactoryController');
 
 exports.createReview = catchAync(async (req, res, next) => {
   const review = await Review.create({
@@ -29,3 +34,9 @@ exports.getReviews = catchAync(async (req, res, next) => {
     },
   });
 });
+
+exports.getReview = getResouceById(Review);
+
+exports.updateReview = updateResource(Review);
+
+exports.deleteReview = deleteResource(Review);
