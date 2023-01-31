@@ -23,12 +23,15 @@ router.post('/forgot-password', forgotPassword);
 
 router.patch('/reset-password/:token', resetPassword);
 
-router.patch('/change-password', protectRoute, changePassword);
+// protect all route after this middleware
+router.use(protectRoute);
+
+router.patch('/change-password', changePassword);
 
 router
   .route('/user')
-  .get(protectRoute, getAuthUser)
-  .patch(protectRoute, updateAuthUser)
-  .delete(protectRoute, deleteAuthUSer);
+  .get(getAuthUser)
+  .patch(updateAuthUser)
+  .delete(deleteAuthUSer);
 
 module.exports = router;

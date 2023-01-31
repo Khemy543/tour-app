@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Tour = require('./tourModel');
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -32,13 +33,45 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre(/^find/, function (next) {
-  /* this.populate({
-    path: 'tour',
-    select: 'name',
-  }).populate({ path: 'user', select: 'name' }); */
   this.populate({ path: 'user', select: 'name' });
   next();
+});
+
+//static methods
+reviewSchema.statics.calculateAverageRatings = async function (tourId) {
+  //this points to Review model
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        ratingsQuantity: { $sum: 1 },
+        ratingsAverage: { $avg: '$rating' },
+      },
+    },
+  ]);
+  await Tour.findByIdAndUpdate(tourId, stats[0]);
+};
+
+reviewSchema.post('save', function () {
+  // this.constructor points to the current review
+  this.constructor.calculateAverageRatings(this.tour);
+});
+
+/* reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.reviewData = await this.findOne(); // returns the not updated review data
+  next();
+}); */
+
+reviewSchema.post(/^findOneAnd/, (doc) => {
+  if (doc) {
+    doc.constructor.calculateAverageRatings(doc.tour); //call the static method on the reviewData
+  }
 });
 
 const Review = mongoose.model('Review', reviewSchema);
