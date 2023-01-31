@@ -10,6 +10,8 @@ const {
   getAuthUser,
   updateAuthUser,
   deleteAuthUSer,
+  uploadUserPhoto,
+  resizeUserPhoto,
 } = require('../controllers/authController');
 
 const router = express.Router();
@@ -31,7 +33,7 @@ router.patch('/change-password', changePassword);
 router
   .route('/user')
   .get(getAuthUser)
-  .patch(updateAuthUser)
+  .patch(uploadUserPhoto, resizeUserPhoto, updateAuthUser)
   .delete(deleteAuthUSer);
 
 module.exports = router;
