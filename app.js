@@ -6,6 +6,7 @@ const mongoSantize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
@@ -20,6 +21,8 @@ const bookingRouter = require('./routes/bookingRoutes');
 const app = express();
 
 app.enable('trust-proxy');
+
+app.use(cors());
 
 //middlewares
 
