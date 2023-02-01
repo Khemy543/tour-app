@@ -43,17 +43,13 @@ const getSignedToken = (id) => {
   return token;
 };
 
-const cookieOptions = {
+const cookieOptions = (req) => ({
   expires: new Date(
     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
   ),
-  secure: true,
   httpOnly: true,
-};
-
-if (process.env.NODE_ENV === 'production') {
-  cookieOptions.secure = false;
-}
+  secure: req.secure || req.headers('x-forwarded-proto') === 'https',
+});
 
 const filterObj = (obj, fields) => {
   const newObj = {};
@@ -91,7 +87,7 @@ exports.signup = catchAync(async (req, res, next) => {
 
   user.password = undefined;
   const url = '/';
-  res.cookie('jwt', getSignedToken(user._id), cookieOptions);
+  res.cookie('jwt', getSignedToken(user._id), cookieOptions(req));
   await new Email(user, url).send('welcome', 'Welcome to our webapp');
   res.status(201).json({
     success: true,
@@ -118,7 +114,7 @@ exports.login = catchAync(async (req, res, next) => {
   }
   //send response
   user.password = undefined;
-  res.cookie('jwt', getSignedToken(user._id), cookieOptions);
+  res.cookie('jwt', getSignedToken(user._id), cookieOptions(req));
   res.status(200).json({
     success: true,
     data: {
