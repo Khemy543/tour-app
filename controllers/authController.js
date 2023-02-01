@@ -7,7 +7,7 @@ const sharp = require('sharp'); // for resizing images
 const User = require('../models/userModel');
 const catchAync = require('../utils/catchAync');
 const AppError = require('../utils/appError');
-const sendEmail = require('../utils/email');
+const Email = require('../utils/email');
 
 /* const multerStorage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -90,7 +90,9 @@ exports.signup = catchAync(async (req, res, next) => {
   });
 
   user.password = undefined;
+  const url = '/';
   res.cookie('jwt', getSignedToken(user._id), cookieOptions);
+  await new Email(user, url).send('welcome', 'Welcome to our webapp');
   res.status(201).json({
     success: true,
     data: {
@@ -186,13 +188,8 @@ exports.forgotPassword = catchAync(async (req, res, next) => {
     'host'
   )}/api/v1/auth/reset-password/${token}`;
 
-  const message = `Forgot password!. Please submit a patch request with your new password to this url ${resetURL}. \n if you didnt submit this request forget email`;
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Password Reset',
-      message,
-    });
+    await new Email(user, resetURL).send('password-reset', 'Reset password');
 
     res.status(200).json({
       success: true,
