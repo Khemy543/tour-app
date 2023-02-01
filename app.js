@@ -22,11 +22,17 @@ const app = express();
 
 app.enable('trust-proxy');
 
-app.use(
+// implementing CORS
+
+app.use(cors());
+
+/* app.use(
   cors({
     origin: process.env.APP_URL,
   })
-);
+); */
+
+app.options('*', cors());
 
 //middlewares
 

@@ -4,7 +4,7 @@
   "description": "learning express framework",
   "main": "app.js",
   "engines": {
-    "node": ">=10.0.0"
+    "node": "^14"
   },
   "scripts": {
     "start": "node server.js",
