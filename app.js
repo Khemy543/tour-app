@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const mongoSantize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const compression = require('compression');
 
 const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
@@ -60,6 +61,10 @@ app.use(
     ],
   })
 );
+
+// copmression of our text repsonse
+app.use(compression);
+
 //routes
 // mounting routers
 app.use('/api/v1/auth', authRouter);
