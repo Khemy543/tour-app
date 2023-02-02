@@ -17,6 +17,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const { createWebhookCheckout } = require('./controllers/bookingController');
 
 const app = express();
 
@@ -54,8 +55,15 @@ app.use('/api', limiter);
 
 app.use(express.static(`${__dirname}/public`));
 
+app.post(
+  '/stripe-checkout-webhook',
+  express.raw({ type: 'application/json' }),
+  createWebhookCheckout
+);
+
 //middleware to get request body
 app.use(express.json({ limit: '10kb' })); // limiting the size of the request body to 10KB
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 //Data sanitization against malicious query injection
 app.use(mongoSantize());
